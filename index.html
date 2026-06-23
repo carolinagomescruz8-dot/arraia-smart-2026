@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="wrap">
+  <main class="wrap" id="areaConfirmacao">
     <section class="card hero">
       <img src="assets/logo-arraia-smart.png" alt="Logo Arraiá do Smart 2026" class="logo" />
       <h1>ARRAIÁ DO SMART</h1>
@@ -21,8 +21,8 @@
 
       <div class="local">
         <strong>📍 Local do evento</strong>
-        <span id="localObra">Arena Grama Beach & Soccer</span>
-        <small id="enderecoObra">R. Padre Adriano, 49 - Grama, Juiz de Fora - MG, 36048-370</small>
+        <span>Arena Grama Beach & Soccer</span>
+        <small>R. Padre Adriano, 49 - Grama, Juiz de Fora - MG, 36048-370</small>
       </div>
     </section>
 
@@ -42,7 +42,7 @@
         </select>
 
         <label>De qual obra você é? *</label>
-        <input type="text" id="obra" required placeholder="Ex.: Smart Garden, Realeza, Visitante..." />
+        <input type="text" id="obra" required placeholder="Ex.: Smart, Realeza, Visitante..." />
 
         <label>Levará acompanhante? *</label>
         <select id="levaAcompanhante" required>
@@ -66,11 +66,70 @@
       </form>
 
       <div id="msg" class="msg hidden"></div>
-      <a href="admin.html" class="admin-link">Acesso da organização</a>
+      <button type="button" class="link-button" id="btnAbrirOrganizacao">Área da organização</button>
     </section>
   </main>
 
-  <script type="module" src="firebase-config.js"></script>
+  <main class="wrap admin-wrap hidden" id="areaLogin">
+    <section class="card login-card">
+      <img src="assets/logo-arraia-smart.png" alt="Logo Arraiá do Smart 2026" class="logo small" />
+      <h1>Organização</h1>
+      <p class="tag">Acesso restrito</p>
+
+      <form id="loginForm">
+        <label>Usuário</label>
+        <input type="text" id="usuarioAdmin" required placeholder="Digite o usuário" />
+
+        <label>Senha</label>
+        <input type="password" id="senhaAdmin" required placeholder="Digite a senha" />
+
+        <button type="submit">Entrar</button>
+      </form>
+
+      <div id="loginMsg" class="msg error hidden">Usuário ou senha incorretos.</div>
+      <button type="button" class="link-button" id="btnVoltarLogin">Voltar para confirmação</button>
+    </section>
+  </main>
+
+  <main class="wrap admin-wrap hidden" id="painelAdmin">
+    <section class="card">
+      <img src="assets/logo-arraia-smart.png" alt="Logo Arraiá do Smart 2026" class="logo small" />
+      <h1>Organização</h1>
+      <p class="tag">Arraiá do Smart 2026 — Festa na Obra</p>
+      <p class="muted center">24/07/2026 às 18:00h • Arena Grama Beach & Soccer</p>
+      <p class="muted center">R. Padre Adriano, 49 - Grama, Juiz de Fora - MG, 36048-370</p>
+
+      <div class="totais">
+        <div><strong id="totalConfirmados">0</strong><span>Confirmados</span></div>
+        <div><strong id="totalAcompanhantes">0</strong><span>Acompanhantes</span></div>
+        <div><strong id="totalGeral">0</strong><span>Total geral</span></div>
+      </div>
+
+      <div class="admin-actions">
+        <button type="button" id="btnExportar">Exportar CSV</button>
+        <button type="button" id="btnSair" class="secondary">Sair</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Participa</th>
+              <th>Obra</th>
+              <th>Acompanhantes</th>
+              <th>Telefone</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+
+      <button type="button" class="link-button" id="btnVoltarPainel">Voltar para confirmação</button>
+    </section>
+  </main>
+
   <script type="module" src="app.js"></script>
 </body>
 </html>
