@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Arraiá do Smart 2026 | Confirmação</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="card hero">
+      <img src="assets/logo-arraia-smart.png" alt="Logo Arraiá do Smart 2026" class="logo" />
+      <h1>ARRAIÁ DO SMART</h1>
+      <h2>2026</h2>
+      <p class="tag">Festa na Obra</p>
+
+      <div class="event-info">
+        <div><strong>📅 Data</strong><span>24/07/2026</span></div>
+        <div><strong>🕕 Horário</strong><span>18:00h</span></div>
+      </div>
+
+      <div class="local">
+        <strong>📍 Local do evento</strong>
+        <span id="localObra">Arena Grama Beach & Soccer</span>
+        <small id="enderecoObra">R. Padre Adriano, 49 - Grama, Juiz de Fora - MG, 36048-370</small>
+      </div>
+    </section>
+
+    <section class="card form-card">
+      <h3>Confirme sua presença</h3>
+      <p class="muted">Preencha abaixo para ajudarmos na organização da festa.</p>
+
+      <form id="rsvpForm">
+        <label>Nome completo *</label>
+        <input type="text" id="nome" required placeholder="Digite seu nome" />
+
+        <label>Participará do evento? *</label>
+        <select id="participa" required>
+          <option value="">Selecione</option>
+          <option value="Sim">Sim</option>
+          <option value="Não">Não</option>
+        </select>
+
+        <label>De qual obra você é? *</label>
+        <input type="text" id="obra" required placeholder="Ex.: Smart Garden, Realeza, Visitante..." />
+
+        <label>Levará acompanhante? *</label>
+        <select id="levaAcompanhante" required>
+          <option value="">Selecione</option>
+          <option value="Não">Não</option>
+          <option value="Sim">Sim</option>
+        </select>
+
+        <div id="boxAcompanhantes" class="hidden">
+          <label>Quantidade de acompanhantes *</label>
+          <input type="number" id="qtdAcompanhantes" min="0" max="20" value="0" />
+        </div>
+
+        <label>Telefone</label>
+        <input type="tel" id="telefone" placeholder="(32) 99999-9999" />
+
+        <label>Observações</label>
+        <textarea id="observacoes" rows="3" placeholder="Ex.: restrição alimentar"></textarea>
+
+        <button type="submit" id="btnEnviar">Confirmar presença</button>
+      </form>
+
+      <div id="msg" class="msg hidden"></div>
+      <a href="admin.html" class="admin-link">Acesso da organização</a>
+    </section>
+  </main>
+
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
