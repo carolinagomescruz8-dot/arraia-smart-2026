@@ -1,10 +1,8 @@
-// COLE AQUI A CONFIGURAÇÃO DO SEU FIREBASE
-// Firebase Console > Project settings > General > Your apps > Web app
 export const firebaseConfig = {
-  apiKey: "COLE_AQUI",
-  authDomain: "COLE_AQUI.firebaseapp.com",
-  projectId: "COLE_AQUI",
-  storageBucket: "COLE_AQUI.appspot.com",
-  messagingSenderId: "COLE_AQUI",
-  appId: "COLE_AQUI"
+  apiKey: "AIzaSyC-lVQmeMn6eBD4t_X0uIsRN735D2QoLNc",
+  authDomain: "arraia-smart-2026.firebaseapp.com",
+  projectId: "arraia-smart-2026",
+  storageBucket: "arraia-smart-2026.firebasestorage.app",
+  messagingSenderId: "647574486378",
+  appId: "1:647574486378:web:41a2b27e44e3189a9eb913"
 };
