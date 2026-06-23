@@ -1,53 +1,74 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+  onSnapshot,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const ADMIN_USER = "admin";
 const ADMIN_PASSWORD = "Smart2026!";
+const COLLECTION_NAME = "arraia_smart_2026";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const areaConfirmacao = document.getElementById("areaConfirmacao");
-const areaLogin = document.getElementById("areaLogin");
-const painelAdmin = document.getElementById("painelAdmin");
+const $ = (id) => document.getElementById(id);
 
-const form = document.getElementById("rsvpForm");
-const msg = document.getElementById("msg");
-const levaAcompanhante = document.getElementById("levaAcompanhante");
-const boxAcompanhantes = document.getElementById("boxAcompanhantes");
-const qtdAcompanhantes = document.getElementById("qtdAcompanhantes");
+const rsvpForm = $("rsvpForm");
+const msg = $("msg");
+const levaAcompanhante = $("levaAcompanhante");
+const boxAcompanhantes = $("boxAcompanhantes");
+const qtdAcompanhantes = $("qtdAcompanhantes");
 
-const loginForm = document.getElementById("loginForm");
-const loginMsg = document.getElementById("loginMsg");
+const areaConfirmacao = $("areaConfirmacao");
+const btnAreaOrganizacao = $("btnAreaOrganizacao");
+const loginCard = $("loginCard");
+const loginForm = $("loginForm");
+const loginMsg = $("loginMsg");
+const btnVoltarLogin = $("btnVoltarLogin");
+
+const painelAdmin = $("painelAdmin");
+const btnSair = $("btnSair");
+const btnExportar = $("btnExportar");
+const btnVoltarConfirmacao = $("btnVoltarConfirmacao");
 
 let unsubscribe = null;
 let linhas = [];
 
-function mostrar(secao) {
-  areaConfirmacao.classList.add("hidden");
-  areaLogin.classList.add("hidden");
-  painelAdmin.classList.add("hidden");
-  secao.classList.remove("hidden");
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
+function mostrar(el) { el.classList.remove("hidden"); }
+function esconder(el) { el.classList.add("hidden"); }
 
-function estaLogado() {
-  return sessionStorage.getItem("arraiaSmartAdmin") === "ok";
-}
-
-function abrirPainel() {
-  mostrar(painelAdmin);
-  iniciarFirestore();
-}
-
-function sair() {
-  sessionStorage.removeItem("arraiaSmartAdmin");
-  if (unsubscribe) {
-    unsubscribe();
-    unsubscribe = null;
-  }
+function mostrarConfirmacao() {
   mostrar(areaConfirmacao);
+  esconder(loginCard);
+  esconder(painelAdmin);
+}
+
+function mostrarLogin() {
+  esconder(areaConfirmacao);
+  mostrar(loginCard);
+  esconder(painelAdmin);
+}
+
+function mostrarPainel() {
+  esconder(areaConfirmacao);
+  esconder(loginCard);
+  mostrar(painelAdmin);
+  iniciarPainel();
+}
+
+function safe(value) {
+  return String(value ?? "").replace(/[&<>"]/g, (ch) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;"
+  }[ch]));
 }
 
 function formatDate(ts) {
@@ -55,64 +76,87 @@ function formatDate(ts) {
   return ts.toDate().toLocaleString("pt-BR");
 }
 
-function safe(value) {
-  return String(value ?? "").replace(/[&<>\"]/g, (ch) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "\"": "&quot;"
-  }[ch]));
-}
-
 levaAcompanhante.addEventListener("change", () => {
-  const sim = levaAcompanhante.value === "Sim";
-  boxAcompanhantes.classList.toggle("hidden", !sim);
-  qtdAcompanhantes.value = sim ? (qtdAcompanhantes.value === "0" ? 1 : qtdAcompanhantes.value) : 0;
+  if (levaAcompanhante.value === "Sim") {
+    mostrar(boxAcompanhantes);
+    qtdAcompanhantes.required = true;
+  } else {
+    esconder(boxAcompanhantes);
+    qtdAcompanhantes.required = false;
+    qtdAcompanhantes.value = 0;
+  }
 });
 
-form.addEventListener("submit", async (e) => {
+rsvpForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const btn = document.getElementById("btnEnviar");
+
+  const btn = $("btnEnviar");
   btn.disabled = true;
   btn.textContent = "Enviando...";
 
-  const data = {
-    nome: document.getElementById("nome").value.trim(),
-    participa: document.getElementById("participa").value,
-    obra: document.getElementById("obra").value.trim(),
-    levaAcompanhante: levaAcompanhante.value,
-    qtdAcompanhantes: Number(qtdAcompanhantes.value || 0),
-    telefone: document.getElementById("telefone").value.trim(),
-    observacoes: document.getElementById("observacoes").value.trim(),
-    criadoEm: serverTimestamp()
-  };
-
   try {
-    await addDoc(collection(db, "arraia_smart_2026"), data);
-    form.reset();
-    boxAcompanhantes.classList.add("hidden");
+    await addDoc(collection(db, COLLECTION_NAME), {
+      nome: $("nome").value.trim(),
+      participa: $("participa").value,
+      obra: $("obra").value.trim(),
+      levaAcompanhante: $("levaAcompanhante").value,
+      qtdAcompanhantes: Number($("qtdAcompanhantes").value || 0),
+      telefone: $("telefone").value.trim(),
+      observacoes: $("observacoes").value.trim(),
+      criadoEm: serverTimestamp()
+    });
+
+    msg.textContent = "Presença registrada com sucesso!";
     msg.className = "msg success";
-    msg.innerHTML = "🎉 <strong>Presença registrada!</strong><br>Obrigado por confirmar sua participação no Arraiá do Smart 2026.";
-  } catch (err) {
+    rsvpForm.reset();
+    esconder(boxAcompanhantes);
+  } catch (error) {
+    console.error(error);
+    msg.textContent = "Erro ao confirmar. Tente novamente ou avise a organização.";
     msg.className = "msg error";
-    msg.textContent = "Não foi possível salvar agora. Confira a configuração do Firebase.";
-    console.error(err);
   } finally {
     btn.disabled = false;
     btn.textContent = "Confirmar presença";
   }
 });
 
+btnAreaOrganizacao.addEventListener("click", mostrarLogin);
+btnVoltarLogin.addEventListener("click", mostrarConfirmacao);
+btnVoltarConfirmacao.addEventListener("click", mostrarConfirmacao);
+
+loginForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const usuario = $("usuarioAdmin").value.trim();
+  const senha = $("senhaAdmin").value;
+
+  if (usuario === ADMIN_USER && senha === ADMIN_PASSWORD) {
+    sessionStorage.setItem("arraiaSmartAdmin", "ok");
+    esconder(loginMsg);
+    mostrarPainel();
+  } else {
+    mostrar(loginMsg);
+  }
+});
+
+btnSair.addEventListener("click", () => {
+  sessionStorage.removeItem("arraiaSmartAdmin");
+  if (unsubscribe) unsubscribe();
+  unsubscribe = null;
+  mostrarConfirmacao();
+});
+
 function render(docs) {
-  linhas = docs.map(d => ({ id: d.id, ...d.data() }));
-  const confirmados = linhas.filter(x => x.participa === "Sim");
+  linhas = docs.map((d) => ({ id: d.id, ...d.data() }));
+
+  const confirmados = linhas.filter((x) => x.participa === "Sim");
   const acompanhantes = confirmados.reduce((acc, x) => acc + Number(x.qtdAcompanhantes || 0), 0);
 
-  document.getElementById("totalConfirmados").textContent = confirmados.length;
-  document.getElementById("totalAcompanhantes").textContent = acompanhantes;
-  document.getElementById("totalGeral").textContent = confirmados.length + acompanhantes;
+  $("totalConfirmados").textContent = confirmados.length;
+  $("totalAcompanhantes").textContent = acompanhantes;
+  $("totalGeral").textContent = confirmados.length + acompanhantes;
 
-  document.getElementById("tbody").innerHTML = linhas.map(x => `
+  $("tbody").innerHTML = linhas.map((x) => `
     <tr>
       <td>${safe(x.nome)}</td>
       <td>${safe(x.participa)}</td>
@@ -124,41 +168,21 @@ function render(docs) {
   `).join("");
 }
 
-function iniciarFirestore() {
+function iniciarPainel() {
   if (unsubscribe) return;
-  const q = query(collection(db, "arraia_smart_2026"), orderBy("criadoEm", "desc"));
-  unsubscribe = onSnapshot(q, snap => render(snap.docs), err => {
-    console.error(err);
-    alert("Não foi possível carregar o painel. Verifique as regras do Firestore.");
+
+  const q = query(collection(db, COLLECTION_NAME), orderBy("criadoEm", "desc"));
+  unsubscribe = onSnapshot(q, (snap) => {
+    render(snap.docs);
+  }, (error) => {
+    console.error(error);
+    $("tbody").innerHTML = `<tr><td colspan="6">Erro ao carregar dados.</td></tr>`;
   });
 }
 
-loginForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const usuario = document.getElementById("usuarioAdmin").value.trim();
-  const senha = document.getElementById("senhaAdmin").value;
-
-  if (usuario === ADMIN_USER && senha === ADMIN_PASSWORD) {
-    sessionStorage.setItem("arraiaSmartAdmin", "ok");
-    loginMsg.classList.add("hidden");
-    abrirPainel();
-  } else {
-    loginMsg.classList.remove("hidden");
-  }
-});
-
-document.getElementById("btnAbrirOrganizacao").addEventListener("click", () => {
-  if (estaLogado()) abrirPainel();
-  else mostrar(areaLogin);
-});
-
-document.getElementById("btnVoltarLogin").addEventListener("click", () => mostrar(areaConfirmacao));
-document.getElementById("btnVoltarPainel").addEventListener("click", () => mostrar(areaConfirmacao));
-document.getElementById("btnSair").addEventListener("click", sair);
-
-document.getElementById("btnExportar").addEventListener("click", () => {
+btnExportar.addEventListener("click", () => {
   const header = ["Nome", "Participa", "Obra", "Leva acompanhante", "Qtd acompanhantes", "Telefone", "Observações", "Data"];
-  const rows = linhas.map(x => [
+  const rows = linhas.map((x) => [
     x.nome || "",
     x.participa || "",
     x.obra || "",
@@ -170,14 +194,20 @@ document.getElementById("btnExportar").addEventListener("click", () => {
   ]);
 
   const csv = [header, ...rows]
-    .map(r => r.map(v => `"${String(v).replaceAll('"', '""')}"`).join(";"))
+    .map((r) => r.map((v) => `"${String(v).replaceAll('"', '""')}"`).join(";"))
     .join("\n");
 
   const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
+
   const a = document.createElement("a");
   a.href = url;
   a.download = "confirmados-arraia-smart-2026.csv";
   a.click();
+
   URL.revokeObjectURL(url);
 });
+
+if (sessionStorage.getItem("arraiaSmartAdmin") === "ok") {
+  mostrarPainel();
+}

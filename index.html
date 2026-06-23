@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="wrap" id="areaConfirmacao">
+  <main class="wrap">
     <section class="card hero">
       <img src="assets/logo-arraia-smart.png" alt="Logo Arraiá do Smart 2026" class="logo" />
       <h1>ARRAIÁ DO SMART</h1>
@@ -26,7 +26,7 @@
       </div>
     </section>
 
-    <section class="card form-card">
+    <section class="card form-card" id="areaConfirmacao">
       <h3>Confirme sua presença</h3>
       <p class="muted">Preencha abaixo para ajudarmos na organização da festa.</p>
 
@@ -42,7 +42,7 @@
         </select>
 
         <label>De qual obra você é? *</label>
-        <input type="text" id="obra" required placeholder="Ex.: Smart, Realeza, Visitante..." />
+        <input type="text" id="obra" required placeholder="Ex.: Smart Garden, Realeza, Visitante..." />
 
         <label>Levará acompanhante? *</label>
         <select id="levaAcompanhante" required>
@@ -66,40 +66,32 @@
       </form>
 
       <div id="msg" class="msg hidden"></div>
-      <button type="button" class="link-button" id="btnAbrirOrganizacao">Área da organização</button>
+      <button type="button" id="btnAreaOrganizacao" class="link-button">Área da organização</button>
     </section>
-  </main>
 
-  <main class="wrap admin-wrap hidden" id="areaLogin">
-    <section class="card login-card">
-      <img src="assets/logo-arraia-smart.png" alt="Logo Arraiá do Smart 2026" class="logo small" />
-      <h1>Organização</h1>
-      <p class="tag">Acesso restrito</p>
+    <section class="card form-card hidden" id="loginCard">
+      <h3>Área da Organização</h3>
+      <p class="muted">Acesso restrito à administradora.</p>
 
       <form id="loginForm">
         <label>Usuário</label>
-        <input type="text" id="usuarioAdmin" required placeholder="Digite o usuário" />
+        <input type="text" id="usuarioAdmin" autocomplete="username" required />
 
         <label>Senha</label>
-        <input type="password" id="senhaAdmin" required placeholder="Digite a senha" />
+        <input type="password" id="senhaAdmin" autocomplete="current-password" required />
 
         <button type="submit">Entrar</button>
       </form>
 
       <div id="loginMsg" class="msg error hidden">Usuário ou senha incorretos.</div>
-      <button type="button" class="link-button" id="btnVoltarLogin">Voltar para confirmação</button>
+      <button type="button" id="btnVoltarLogin" class="link-button">Voltar para confirmação</button>
     </section>
-  </main>
 
-  <main class="wrap admin-wrap hidden" id="painelAdmin">
-    <section class="card">
-      <img src="assets/logo-arraia-smart.png" alt="Logo Arraiá do Smart 2026" class="logo small" />
-      <h1>Organização</h1>
-      <p class="tag">Arraiá do Smart 2026 — Festa na Obra</p>
-      <p class="muted center">24/07/2026 às 18:00h • Arena Grama Beach & Soccer</p>
-      <p class="muted center">R. Padre Adriano, 49 - Grama, Juiz de Fora - MG, 36048-370</p>
+    <section class="card admin-panel hidden" id="painelAdmin">
+      <h3>Organização</h3>
+      <p class="muted">Arraiá do Smart 2026 — Festa na Obra</p>
 
-      <div class="totais">
+      <div class="stats">
         <div><strong id="totalConfirmados">0</strong><span>Confirmados</span></div>
         <div><strong id="totalAcompanhantes">0</strong><span>Acompanhantes</span></div>
         <div><strong id="totalGeral">0</strong><span>Total geral</span></div>
@@ -107,7 +99,7 @@
 
       <div class="admin-actions">
         <button type="button" id="btnExportar">Exportar CSV</button>
-        <button type="button" id="btnSair" class="secondary">Sair</button>
+        <button type="button" id="btnSair">Sair</button>
       </div>
 
       <div class="table-wrap">
@@ -126,7 +118,7 @@
         </table>
       </div>
 
-      <button type="button" class="link-button" id="btnVoltarPainel">Voltar para confirmação</button>
+      <button type="button" id="btnVoltarConfirmacao" class="link-button">Voltar para confirmação</button>
     </section>
   </main>
 
